@@ -29,6 +29,7 @@ import it.niedermann.nextcloud.deck.model.JoinCardWithUser;
 import it.niedermann.nextcloud.deck.model.Label;
 import it.niedermann.nextcloud.deck.model.Stack;
 import it.niedermann.nextcloud.deck.model.User;
+import it.niedermann.nextcloud.deck.model.dav.DeckComment;
 import it.niedermann.nextcloud.deck.model.enums.DBStatus;
 import it.niedermann.nextcloud.deck.model.full.FullBoard;
 import it.niedermann.nextcloud.deck.model.full.FullCard;
@@ -245,6 +246,16 @@ public class SyncManager {
         // TODO implement me
         // No return value required, since the activities are observed and should get notified
         // Offline-Support needed.
+        doAsync(() -> {
+            Account account = dataBaseAdapter.getAccountByIdDirectly(accountId);
+            DeckComment commentEntity = new DeckComment(account.getUserName(), account.getName(), comment);
+//            new DataPropagationHelper(serverAdapter, dataBaseAdapter).deleteEntity(new BoardDataProvider(), fullBoard, new IResponseCallback<FullBoard>(account) {
+//                @Override
+//                public void onResponse(FullBoard response) {
+//                    // doNothing
+//                }
+//            });
+        });
     }
 
     public void deleteBoard(Board board) {

@@ -20,9 +20,11 @@ public class ApiProvider {
 
     private static final String DECK_API_ENDPOINT = "/index.php/apps/deck/api/v1.0/";
     private static final String NC_API_ENDPOINT = "/ocs/v2.php/";
+    private static final String NC_DAV_ENDPOINT = "/remote.php/dav/";
 
     private DeckAPI deckAPI;
     private NextcloudServerAPI nextcloudAPI;
+    private NextcloudDavAPI nextcloudDavAPI;
     private Context context;
     private SingleSignOnAccount ssoAccount;
 
@@ -36,6 +38,7 @@ public class ApiProvider {
             NextcloudAPI nextcloudAPI = new NextcloudAPI(context, ssoAccount, GsonConfig.getGson(), callback);
             deckAPI = new NextcloudRetrofitApiBuilder(nextcloudAPI, DECK_API_ENDPOINT).create(DeckAPI.class);
             this.nextcloudAPI = new NextcloudRetrofitApiBuilder(nextcloudAPI, NC_API_ENDPOINT).create(NextcloudServerAPI.class);
+            nextcloudDavAPI = new NextcloudRetrofitApiBuilder(nextcloudAPI, NC_DAV_ENDPOINT).create(NextcloudDavAPI.class);
         } catch (SSOException e) {
             DeckLog.logError(e);
             callback.onError(e);
@@ -52,6 +55,10 @@ public class ApiProvider {
 
     public NextcloudServerAPI getNextcloudAPI() {
         return nextcloudAPI;
+    }
+
+    public NextcloudDavAPI getNextcloudDavAPI() {
+        return nextcloudDavAPI;
     }
 
     public String getServerUrl() throws NextcloudFilesAppAccountNotFoundException, NoCurrentAccountSelectedException {
