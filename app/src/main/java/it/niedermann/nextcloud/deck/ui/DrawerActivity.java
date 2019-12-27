@@ -63,6 +63,7 @@ import it.niedermann.nextcloud.deck.model.Account;
 import it.niedermann.nextcloud.deck.model.ocs.Capabilities;
 import it.niedermann.nextcloud.deck.model.ocs.Version;
 import it.niedermann.nextcloud.deck.persistence.sync.SyncManager;
+import it.niedermann.nextcloud.deck.persistence.sync.SyncWorker;
 import it.niedermann.nextcloud.deck.persistence.sync.adapters.db.util.WrappedLiveData;
 import it.niedermann.nextcloud.deck.ui.board.EditBoardDialogFragment;
 import it.niedermann.nextcloud.deck.ui.exception.ExceptionHandler;
@@ -170,6 +171,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
                                         editor.remove(sharedPreferenceLastAccount);
                                         editor.commit(); // Has to be done synchronously
                                     } else {
+                                        SyncWorker.update(getApplicationContext());
                                         accountIsGettingImportedSnackbar.show();
                                     }
                                 }
