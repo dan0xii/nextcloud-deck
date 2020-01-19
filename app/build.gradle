@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "it.niedermann.nextcloud.deck"
         minSdkVersion 14
-        targetSdkVersion 28
-        versionCode 16
-        versionName "0.0.16"
+        targetSdkVersion 29
+        versionCode 17
+        versionName "0.0.17"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -93,7 +93,7 @@ dependencies {
     // -------------
 
     // Tests
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
