@@ -1,95 +1,70 @@
 package it.niedermann.nextcloud.deck.ui.about;
 
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.format.DateUtils;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import java.util.Objects;
-
-import butterknife.BindString;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import it.niedermann.nextcloud.deck.BuildConfig;
 import it.niedermann.nextcloud.deck.R;
 import it.niedermann.nextcloud.deck.api.IResponseCallback;
+import it.niedermann.nextcloud.deck.databinding.FragmentAboutCreditsTabBinding;
 import it.niedermann.nextcloud.deck.exceptions.OfflineException;
 import it.niedermann.nextcloud.deck.model.ocs.Capabilities;
 import it.niedermann.nextcloud.deck.persistence.sync.SyncManager;
 import it.niedermann.nextcloud.deck.util.DateUtil;
-import it.niedermann.nextcloud.deck.util.LinkUtil;
+
+import static it.niedermann.nextcloud.deck.util.SpannableUtil.disabled;
+import static it.niedermann.nextcloud.deck.util.SpannableUtil.setTextWithURL;
+import static it.niedermann.nextcloud.deck.util.SpannableUtil.strong;
+import static it.niedermann.nextcloud.deck.util.SpannableUtil.url;
 
 public class AboutFragmentCreditsTab extends Fragment {
 
-    @BindView(R.id.about_version)
-    TextView aboutVersion;
-    @BindView(R.id.about_server_app_version)
-    TextView aboutServerAppVersion;
-    @BindView(R.id.about_maintainer)
-    TextView aboutMaintainer;
-    @BindView(R.id.about_translators)
-    TextView aboutTranslators;
-    @BindView(R.id.last_background_sync)
-    TextView lastBackgroundSyncExecutionTime;
+    private static final int BACKGROUND_SYNC_NEVER_EXECUTED = -1;
 
-    @BindString(R.string.shared_preference_last_background_sync)
-    String sharedPreferencesLastBackgroundSync;
-    @BindString(R.string.you_are_currently_offline)
-    String offlineText;
-    @BindString(R.string.strong_start)
-    String strongStart;
-    @BindString(R.string.strong_end)
-    String strongEnd;
+    private FragmentAboutCreditsTabBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_about_credits_tab, container, false);
-        ButterKnife.bind(this, v);
-        LinkUtil.setHtml(aboutVersion, getString(R.string.about_version, getVersionStrongTag(BuildConfig.VERSION_NAME)));
-        SyncManager syncManager = new SyncManager(Objects.requireNonNull(getActivity()));
+        binding = FragmentAboutCreditsTabBinding.inflate(inflater, container, false);
+
+        // VERSIONS
+
+        binding.aboutVersion.setText(getString(R.string.about_version, strong("v" + BuildConfig.VERSION_NAME)));
+        SyncManager syncManager = new SyncManager(requireActivity());
         try {
             syncManager.getServerVersion(new IResponseCallback<Capabilities>(null) {
                 @Override
                 public void onResponse(Capabilities response) {
-                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> LinkUtil.setHtml(aboutServerAppVersion, getVersionStrongTag(response.getDeckVersion().toString())));
+                    requireActivity().runOnUiThread(() -> binding.aboutServerAppVersion.setText(strong("v" + response.getDeckVersion().toString())));
                 }
             });
         } catch (OfflineException e) {
-            Spannable offlineTextSpannable = new SpannableString(offlineText);
-            offlineTextSpannable.setSpan(new StyleSpan(Typeface.ITALIC), 0, offlineTextSpannable.length(), 0);
-            offlineTextSpannable.setSpan(new ForegroundColorSpan(ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.fg_secondary)), 0, offlineTextSpannable.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            aboutServerAppVersion.setText(offlineTextSpannable);
+            binding.aboutServerAppVersion.setText(disabled(getString(R.string.you_are_currently_offline), requireContext()));
         }
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Objects.requireNonNull(getContext()).getApplicationContext());
-        long lastBackgroundSync = sharedPreferences.getLong(sharedPreferencesLastBackgroundSync, 0);
-        LinkUtil.setHtml(lastBackgroundSyncExecutionTime, getLastBackgroundSyncStrongTag(lastBackgroundSync));
-        LinkUtil.setHtml(aboutMaintainer, LinkUtil.concatenateResources(v.getResources(),
-                R.string.anchor_start, R.string.url_maintainer, R.string.anchor_middle, R.string.about_maintainer, R.string.anchor_end));
-        LinkUtil.setHtml(aboutTranslators,
-                v.getResources().getString(R.string.about_translators_transifex, LinkUtil.concatenateResources(v.getResources(),
-                        R.string.anchor_start, R.string.url_translations, R.string.anchor_middle, R.string.about_translators_transifex_label, R.string.anchor_end
-                )));
-        return v;
-    }
 
-    private String getVersionStrongTag(String version) {
-        return strongStart + "v" + version + strongEnd;
-    }
+        String backgroundSyncOffValue = getString(R.string.pref_value_background_sync_off);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
+        String settingsBackgroundSync = sharedPreferences.getString(getString(R.string.pref_key_background_sync), backgroundSyncOffValue);
+        long lastBackgroundSync = sharedPreferences.getLong(getString(R.string.shared_preference_last_background_sync), BACKGROUND_SYNC_NEVER_EXECUTED);
 
-    private String getLastBackgroundSyncStrongTag(long lastBackgroundSync) {
-        return strongStart + DateUtil.getRelativeDateTimeString(getContext(), lastBackgroundSync, DateUtils.SECOND_IN_MILLIS) + strongEnd;
+        // BACKGROUND SYNC
+
+        binding.lastBackgroundSync.setText(
+                lastBackgroundSync == BACKGROUND_SYNC_NEVER_EXECUTED || settingsBackgroundSync.equals(backgroundSyncOffValue)
+                        ? disabled(getString(R.string.simple_disabled), requireContext())
+                        : strong(DateUtil.getRelativeDateTimeString(getContext(), lastBackgroundSync))
+        );
+        binding.aboutMaintainer.setText(url(getString(R.string.about_maintainer), getString(R.string.url_maintainer)));
+        binding.aboutMaintainer.setMovementMethod(new LinkMovementMethod());
+        setTextWithURL(binding.aboutTranslators, getResources(), R.string.about_translators_transifex, R.string.about_translators_transifex_label, R.string.url_translations);
+        return binding.getRoot();
     }
 }

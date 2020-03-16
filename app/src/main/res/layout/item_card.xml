@@ -20,8 +20,8 @@
         android:paddingStart="@dimen/standard_padding"
         android:paddingLeft="@dimen/standard_padding"
         android:paddingTop="@dimen/standard_half_padding"
-        android:paddingEnd="0dp"
-        android:paddingRight="0dp"
+        android:paddingEnd="@dimen/standard_padding"
+        android:paddingRight="@dimen/standard_padding"
         android:paddingBottom="@dimen/standard_half_padding">
 
         <LinearLayout
@@ -71,6 +71,7 @@
                 android:id="@+id/card_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:contentDescription="@string/label_menu"
                 android:padding="@dimen/standard_quarter_padding"
                 app:srcCompat="@drawable/ic_menu" />
@@ -96,12 +97,8 @@
             android:id="@+id/card_details_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginLeft="0dp"
             android:layout_marginTop="@dimen/standard_quarter_margin"
-            android:layout_marginEnd="@dimen/standard_margin"
-            android:layout_marginRight="@dimen/standard_margin"
-            android:layout_marginBottom="@dimen/standard_half_margin"
+            android:layout_marginBottom="@dimen/standard_quarter_margin"
             android:orientation="horizontal">
 
             <com.google.android.material.chip.ChipGroup
@@ -115,6 +112,7 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="end">
 

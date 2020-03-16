@@ -1,49 +1,24 @@
 package it.niedermann.nextcloud.deck.ui.about;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import it.niedermann.nextcloud.deck.R;
-import it.niedermann.nextcloud.deck.util.LinkUtil;
+import it.niedermann.nextcloud.deck.databinding.FragmentAboutContributionTabBinding;
 
 public class AboutFragmentContributingTab extends Fragment {
 
-    @BindView(R.id.about_source)
-    TextView aboutSource;
-    @BindView(R.id.about_issues)
-    TextView aboutIssues;
-    @BindView(R.id.about_translate)
-    TextView aboutTranslate;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_about_contribution_tab, container, false);
-        Resources resources = v.getResources();
-        ButterKnife.bind(this, v);
-        LinkUtil.setHtml(aboutSource,
-                resources.getString(
-                        R.string.about_source,
-                        LinkUtil.makeLink(resources, R.string.url_source, R.string.url_source)
-                ));
-        LinkUtil.setHtml(aboutIssues,
-                resources.getString(
-                        R.string.about_issues,
-                        LinkUtil.makeLink(resources, R.string.url_issues, R.string.url_issues)
-                ));
-        LinkUtil.setHtml(aboutTranslate,
-                resources.getString(
-                        R.string.about_translate,
-                        LinkUtil.makeLink(resources, R.string.url_translations, R.string.url_translations)
-                ));
-        return v;
+        FragmentAboutContributionTabBinding binding = FragmentAboutContributionTabBinding.inflate(inflater, container, false);
+        binding.aboutSource.setText(getString(R.string.about_source, getString(R.string.url_source)));
+        binding.aboutIssues.setText(getString(R.string.about_issues, getString(R.string.url_issues)));
+        binding.aboutTranslate.setText(getString(R.string.about_translate, getString(R.string.url_translations)));
+        return binding.getRoot();
     }
 }

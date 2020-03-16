@@ -2,8 +2,6 @@ package it.niedermann.nextcloud.deck.persistence.sync;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
 import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
 
-import java.net.URISyntaxException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -142,7 +140,14 @@ public class SyncManager {
                             responseCallback.onError(throwable);
                         }
                     });
-                    doAsync(() -> syncHelper.doUpSyncFor(new BoardDataProvider()));
+                    doAsync(() -> {
+                        try {
+                            syncHelper.doUpSyncFor(new BoardDataProvider());
+                        } catch (Throwable e) {
+                            DeckLog.logError(e);
+                            responseCallback.onError(e);
+                        }
+                    });
 
                 }
 
@@ -155,7 +160,12 @@ public class SyncManager {
 
             syncHelper.setResponseCallback(callback);
 
-            syncHelper.doSyncFor(new BoardDataProvider());
+            try {
+                syncHelper.doSyncFor(new BoardDataProvider());
+            } catch (Throwable e) {
+                DeckLog.logError(e);
+                responseCallback.onError(e);
+            }
         });
     }
 
@@ -956,34 +966,52 @@ public class SyncManager {
     }
 
     private void reorderAscending(List<Card> cardsToReorganize, int startingAtOrder) {
+        Date now = new Date();
         for (Card card : cardsToReorganize) {
             card.setOrder(startingAtOrder);
-            dataBaseAdapter.updateCard(card, card.getStatus() == DBStatus.UP_TO_DATE.getId());
+            if (card.getStatus() == DBStatus.UP_TO_DATE.getId()){
+                card.setStatusEnum(DBStatus.LOCAL_EDITED_SILENT);
+                card.setLastModifiedLocal(now);
+            }
+            dataBaseAdapter.updateCard(card, false);
             startingAtOrder++;
         }
     }
 
-    public LiveData<Attachment> addAttachmentToCard(long accountId, long localCardId, @NonNull Uri uri) {
-        try {
-            DeckLog.log(getPath(dataBaseAdapter.getContext(), uri));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+    public LiveData<Attachment> addAttachmentToCard(long accountId, long localCardId, @NonNull String mimeType,  @NonNull File file) {
         MutableLiveData<Attachment> liveData = new MutableLiveData<>();
         doAsync(() -> {
-            Attachment attachment = new Attachment();
-            attachment.setCardId(localCardId);
-            attachment.setMimetype(Attachment.getMimetypeForUri(dataBaseAdapter.getContext(), uri));
-            attachment.setLocalPath(uri.getPath());
-            attachment.setCreatedAt(new Date());
-            dataBaseAdapter.createAttachment(accountId, attachment);
+            Attachment attachment = populateAttachmentEntityForFile(new Attachment(), localCardId, mimeType, file);
+            Date now = new Date();
+            attachment.setLastModifiedLocal(now);
+            attachment.setCreatedAt(now);
+            FullCard card = dataBaseAdapter.getFullCardByLocalIdDirectly(accountId, localCardId);
+            Stack stack = dataBaseAdapter.getStackByLocalIdDirectly(card.getCard().getStackId());
+            Board board = dataBaseAdapter.getBoardByLocalIdDirectly(stack.getBoardId());
+            Account account = dataBaseAdapter.getAccountByIdDirectly(card.getAccountId());
+            new DataPropagationHelper(serverAdapter, dataBaseAdapter)
+                    .createEntity(new AttachmentDataProvider(null, board, stack, card, Collections.singletonList(attachment)), attachment, new IResponseCallback<Attachment>(account) {
+                        @Override
+                        public void onResponse(Attachment response) {
+                            liveData.postValue(response);
+                        }
+                    });
+        });
+        return liveData;
+    }
+
+    public LiveData<Attachment> updateAttachmentForCard(long accountId, Attachment existing, @NonNull String mimeType,  @NonNull File file) {
+        MutableLiveData<Attachment> liveData = new MutableLiveData<>();
+        doAsync(() -> {
+            Attachment attachment = populateAttachmentEntityForFile(existing, existing.getCardId(), mimeType, file);
+            attachment.setLastModifiedLocal(new Date());
             if (serverAdapter.hasInternetConnection()) {
-                Card card = dataBaseAdapter.getCardByLocalIdDirectly(accountId, localCardId);
-                Stack stack = dataBaseAdapter.getStackByLocalIdDirectly(card.getStackId());
+                FullCard card = dataBaseAdapter.getFullCardByLocalIdDirectly(accountId, existing.getCardId());
+                Stack stack = dataBaseAdapter.getStackByLocalIdDirectly(card.getCard().getStackId());
                 Board board = dataBaseAdapter.getBoardByLocalIdDirectly(stack.getBoardId());
                 Account account = dataBaseAdapter.getAccountByIdDirectly(card.getAccountId());
                 new DataPropagationHelper(serverAdapter, dataBaseAdapter)
-                        .createEntity(new AttachmentDataProvider(null, board, stack, card, Collections.singletonList(attachment)), attachment, new IResponseCallback<Attachment>(account) {
+                        .updateEntity(new AttachmentDataProvider(null, board, stack, card, Collections.singletonList(attachment)), attachment, new IResponseCallback<Attachment>(account) {
                             @Override
                             public void onResponse(Attachment response) {
                                 liveData.postValue(response);
@@ -994,35 +1022,25 @@ public class SyncManager {
         return liveData;
     }
 
-
-    public static String getPath(Context context, Uri uri) throws URISyntaxException {
-        if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = { "_data" };
-            Cursor cursor = null;
-
-            try {
-                cursor = context.getContentResolver().query(uri, projection, null, null, null);
-                int column_index = cursor.getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(column_index);
-                }
-            } catch (Exception e) {
-                // Eat it
-            }
-        }
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
-        }
-
-        return null;
+    private Attachment populateAttachmentEntityForFile(Attachment target, long localCardId, @NonNull String mimeType, @NonNull File file) {
+        Attachment attachment = target;
+        attachment.setCardId(localCardId);
+        attachment.setMimetype(mimeType);
+        attachment.setData(file.getName());
+        attachment.setFilename(file.getName());
+        attachment.setBasename(file.getName());
+        attachment.setLocalPath(file.getAbsolutePath());
+        attachment.setFilesize(file.length());
+        return attachment;
     }
+
 
     public LiveData<Attachment> deleteAttachmentOfCard(long accountId, long localCardId, long localAttachmentId) {
         MutableLiveData<Attachment> liveData = new MutableLiveData<>();
         doAsync(() -> {
             if (serverAdapter.hasInternetConnection()) {
-                Card card = dataBaseAdapter.getCardByLocalIdDirectly(accountId, localCardId);
-                Stack stack = dataBaseAdapter.getStackByLocalIdDirectly(card.getStackId());
+                FullCard card = dataBaseAdapter.getFullCardByLocalIdDirectly(accountId, localCardId);
+                Stack stack = dataBaseAdapter.getStackByLocalIdDirectly(card.getCard().getStackId());
                 Board board = dataBaseAdapter.getBoardByLocalIdDirectly(stack.getBoardId());
                 Attachment attachment = dataBaseAdapter.getAttachmentByLocalIdDirectly(accountId, localAttachmentId);
                 Account account = dataBaseAdapter.getAccountByIdDirectly(card.getAccountId());

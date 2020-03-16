@@ -38,7 +38,8 @@
     <string name="about_app_license">Diese Anwendung ist unter der GNU GENERAL PUBLIC LICENSE v3 + lizenziert.</string>
     <string name="about_app_license_button">Lizenz anzeigen</string>
     <string name="about_icons_disclaimer_title">Icons</string>
-    <string name="about_icons_disclaimer">das ursprüngliche Icon wurde erstellt von %1$s Alle weiteren von dieser App benutzten Icons sind %2$s und wurden erstellt von  Google Inc. und lizenziert unter einer Apache 2.0 Lizenz.</string>
+    <string name="about_icons_disclaimer_app_icon">Für das ursprüngliche Symbol siehe %1$s.</string>
+    <string name="about_icons_disclaimer_mdi_icons">Alle weiteren Symbole dieser App sind %1$s, erstellt von Google Inc. und unter der Apache 2.0-Lizenz lizenziert.</string>
     <string name="about_icons_disclaimer_mdi">Material Design Icons</string>
     <string name="about_credits_tab_title">Credits</string>
     <string name="about_contribution_tab_title">Beitrag</string>
@@ -101,7 +102,7 @@
     <string name="simple_rename">Umbenennen</string>
     <string name="simple_settings">Einstellungen</string>
     <string name="settings_theme_title">Dunkles Design</string>
-    <string name="settings_background_sync">Hintergrundsynchronisation</string>
+    <string name="settings_background_sync">Hintergrundsynchronisierung</string>
     <string name="pref_value_wifi_and_mobile">Über WLAN und mobile Daten synchronisieren</string>
     <string name="pref_value_wifi_only">Nur über WLAN synchronisieren</string>
     <string name="pref_value_theme_light">Hell</string>
@@ -119,11 +120,16 @@
     <string name="simple_comment">Kommentar</string>
     <string name="attachment_delete_message">Damit wird dieser Anhang dauerhaft gelöscht.</string>
     <string name="no_content">Bislang kein Inhalt</string>
-    <string name="last_background_sync">Letzte Hintergrundsynchronisation:</string>
+    <string name="last_background_sync">Letzte Hintergrundsynchronisierung:</string>
     <string name="simple_off">Aus</string>
     <string name="minutes_15">15 Minuten</string>
     <string name="hour_1">1 Stunde</string>
     <string name="hours_6">6 Stunden</string>
     <string name="action_card_move">Karte verschieben</string>
     <string name="action_card_move_title">Verschiebe %1$s</string>
-</resources>
+    <string name="simple_disabled">Deaktiviert</string>
+    <string name="simple_copied">Kopiert</string>
+    <string name="please_add_an_account_first">Bitte zuerst ein Konto hinzufügen</string>
+    <string name="title_is_mandatory">Titel ist obligatorisch</string>
+    <string name="provide_at_least_a_title_or_description">Mindestens einen Titel oder eine Beschreibung eingeben</string>
+    </resources>

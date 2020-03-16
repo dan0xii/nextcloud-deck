@@ -7,18 +7,26 @@
     android:layout_height="match_parent"
     tools:context=".ui.EditActivity">
 
+    <it.niedermann.nextcloud.deck.ui.helper.emptycontentview.EmptyContentView
+        android:id="@+id/save_card_before_add_attachments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:description="@string/save_card_before_attachment"
+        app:image="@drawable/ic_attach_file_grey600_24dp"
+        app:title="@string/attachments" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/attachments_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_attachment"
+        tools:listitem="@layout/item_attachment_default"
         tools:visibility="visible" />
 
     <it.niedermann.nextcloud.deck.ui.helper.emptycontentview.EmptyContentView
-        android:id="@+id/no_attachments"
+        android:id="@+id/empty_content_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

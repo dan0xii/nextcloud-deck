@@ -33,7 +33,8 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginRight="16dp"
                     android:importantForAutofill="no"
-                    android:inputType="text"
+                    android:inputType="textMultiLine"
+                    android:maxLength="100"
                     app:theme="@style/AppTheme.EditText"
                     tools:text="Fancy card title" />
 
@@ -75,7 +76,7 @@
             app:tabMode="fixed" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="fill_parent" />

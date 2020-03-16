@@ -14,6 +14,7 @@
     <string name="simple_boards">Boards</string>
     <string name="simple_add">Add</string>
     <string name="simple_save">Save</string>
+    <string name="simple_more">More</string>
 
     <string name="edit_board">Edit board</string>
     <string name="archive_board">Archive board</string>
@@ -44,7 +45,8 @@
     <string name="about_app_license_button">View license</string>
     <string name="about_app_icon_author_link_label" translatable="false">GitHub</string>
     <string name="about_icons_disclaimer_title">Icons</string>
-    <string name="about_icons_disclaimer">Original icon made by %1$sAll further icons used by this app are %2$s made by Google Inc. and licensed under the Apache 2.0 License.</string>
+    <string name="about_icons_disclaimer_app_icon">For the original icon see %1$s.</string>
+    <string name="about_icons_disclaimer_mdi_icons">All further icons used by this app are %1$s made by Google Inc. and licensed under the Apache 2.0 License.</string>
     <string name="about_icons_disclaimer_mdi">Material Design Icons</string>
     <string name="about_credits_tab_title">Credits</string>
     <string name="about_contribution_tab_title">Contribution</string>
@@ -93,15 +95,6 @@
     <string name="url_about_icons_disclaimer_mdi" translatable="false">https://materialdesignicons.com/</string>
     <string name="url_fragment_update_deck" translatable="false">/index.php/settings/apps/installed/deck</string>
 
-    <!-- HTML Tags -->
-
-    <string name="anchor_start" translatable="false">&lt;a href="</string>
-    <string name="anchor_middle" translatable="false">"></string>
-    <string name="anchor_end" translatable="false">&lt;/a></string>
-    <string name="paragraph_start" translatable="false">&lt;p></string>
-    <string name="paragraph_end" translatable="false">&lt;/p></string>
-    <string name="strong_start" translatable="false">&lt;strong></string>
-    <string name="strong_end" translatable="false">&lt;/strong></string>
     <string name="card_edit_details">Details</string>
     <string name="card_edit_attachments">Attachments</string>
     <string name="card_edit_activity">Activity</string>
@@ -154,4 +147,18 @@
     <string name="hours_6">6 Hours</string>
     <string name="action_card_move">Move card</string>
     <string name="action_card_move_title">Move %1$s</string>
+    <string name="simple_disabled">disabled</string>
+    <string name="simple_copied">Copied</string>
+    <string name="please_add_an_account_first">Please add an account first</string>
+    <string name="title_is_mandatory">Title is mandatory</string>
+    <string name="provide_at_least_a_title_or_description">Provide at least a title or description</string>
+    <string name="welcome_text">Welcome to %1$s</string>
+    <string name="choose_account">Choose Account</string>
+    <string name="save_card_before_attachment">The card needs to be saved before attachments can be added.</string>
+    <string name="server_misconfigured">Server misconfigured</string>
+    <string name="server_misconfigured_explanation">Your server did respond with a HTTP 302 status code, which implies, that you do not have installed the Deck app on your server or something is misconfigured. This can be caused by custom overrides in a .htaccess-file or by Nextcloud apps like OID Client. You can find our contact information for support in the about-section.</string>
+    <string name="server_error">Server error</string>
+    <string name="server_error_explanation">Your server responded with a HTTP 503 status code. This can be the case if the server is currently in maintenance mode. Please contact your administrator or us for support. You can find our contact information in the about-section.</string>
+    <string name="share_add_to_card">Add to card</string>
+    <string name="share_success">Successfully added %1$s to %2$s</string>
 </resources>
