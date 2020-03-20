@@ -71,6 +71,7 @@
 
     <string name="label_add">%1$s hinzufügen</string>
     <string name="error">Es ist ein Fehler aufgetreten</string>
+    <string name="operation_not_yet_supported">Wird bislang noch nicht unterstützt</string>
     <string name="simple_copy">kopieren</string>
     <string name="simple_exception">Ausnahme</string>
     <string name="copied_to_clipboard">In die Zwischenablage kopiert</string>
@@ -142,4 +143,6 @@
     <string name="server_error_explanation">Ihr Server hat mit einem HTTP 503-Statuscode geantwortet. Dies kann der Fall sein, wenn sich der Server derzeit im Wartungsmodus befindet. Bitte wenden Sie sich an Ihren Administrator oder an uns, um Unterstützung zu erhalten. Unsere Kontaktinformationen finden Sie im Info-Bereich.</string>
     <string name="share_add_to_card">Zur Karte hinzufügen</string>
     <string name="share_success">%1$s erfolgreich zu %2$s hinzugefügt</string>
-    </resources>
+    <string name="could_not_copy_to_clipboard">Konnte nicht in die Zwischenablage kopieren</string>
+    <string name="shared_error">Das Teilen von Inhalten aus Apps von Drittanbietern wird noch nicht vollständig unterstützt. Bitte versuchen Sie zuerst, die Datei herunterzuladen und dann aus Ihrem Dateimanager oder aus Ihrer Galerie freizugeben.</string>
+</resources>

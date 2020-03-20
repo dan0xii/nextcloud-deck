@@ -142,4 +142,5 @@
     <string name="server_error_explanation">Twój serwer odpowiedział kodem stanu HTTP 503. Może się tak zdarzyć, jeśli serwer jest obecnie w trybie konserwacji. Skontaktuj się z administratorem lub z nami w celu uzyskania pomocy. Nasze dane kontaktowe znajdziesz w dziale \"O nas\".</string>
     <string name="share_add_to_card">Dodaj do karty</string>
     <string name="share_success">Pomyślnie dodano %1$s do %2$s</string>
+    <string name="could_not_copy_to_clipboard">Nie można skopiować do schowka</string>
     </resources>
